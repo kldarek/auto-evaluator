@@ -19,3 +19,4 @@ llama-index==0.4.35.post1
 streamlit==1.21.0
 gpt-index==0.5.16
 faiss-cpu==1.7.3
+wandb==0.15.0
