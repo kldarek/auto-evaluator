@@ -1,5 +1,4 @@
 import re
-import os
 from langchain.prompts import PromptTemplate
 
 def clean_pdf_text(text: str) -> str:
@@ -14,27 +13,6 @@ def remove_citations(text: str) -> str:
     # [1], [2], [3-5], [3, 33, 49, 51]
     text = re.sub(r'\[[0-9,-]+(,\s[0-9,-]+)*\]', '', text)
     return text
-
-def init_wandb_tracer() -> None:
-    # Set up W&B logging if API key is set
-    if 'WANDB_API_KEY' in os.environ:
-        from wandb.integration.langchain import WandbTracer
-        import atexit
-
-        def wandb_cleanup():
-            WandbTracer.finish()
-
-        # Register the cleanup function with atexit
-        atexit.register(wandb_cleanup)
-
-        project_name = os.environ['WANDB_PROJECT'] if 'WANDB_PROJECT' in os.environ else 'wandb_prompts'
-        entity = os.environ['WANDB_ENTITY'] if 'WANDB_ENTITY' in os.environ else None
-        WandbTracer.init({"project": project_name, "entity": entity})
-
-    else:
-        print('Set WAND_API_KEY environment variable to enable W&B logging')
-
-
 
 template = """You are a teacher grading a quiz. 
 You are given a question, the student's answer, and the true answer, and are asked to score the student answer as either CORRECT or INCORRECT.

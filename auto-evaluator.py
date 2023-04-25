@@ -24,7 +24,27 @@ from langchain.embeddings import HuggingFaceEmbeddings
 from langchain.embeddings.openai import OpenAIEmbeddings
 from gpt_index import LLMPredictor, ServiceContext, GPTFaissIndex
 from langchain.text_splitter import RecursiveCharacterTextSplitter, CharacterTextSplitter
-from text_utils import GRADE_DOCS_PROMPT, GRADE_ANSWER_PROMPT, GRADE_DOCS_PROMPT_FAST, GRADE_ANSWER_PROMPT_FAST, GRADE_ANSWER_PROMPT_BIAS_CHECK, init_wandb_tracer
+from text_utils import GRADE_DOCS_PROMPT, GRADE_ANSWER_PROMPT, GRADE_DOCS_PROMPT_FAST, GRADE_ANSWER_PROMPT_FAST, GRADE_ANSWER_PROMPT_BIAS_CHECK
+
+@st.cache_resource
+def init_wandb_tracer() -> None:
+    # Set up W&B logging if API key is set
+    if 'WANDB_API_KEY' in os.environ:
+        from wandb.integration.langchain import WandbTracer
+        import atexit
+
+        def wandb_cleanup():
+            WandbTracer.finish()
+
+        # Register the cleanup function with atexit
+        atexit.register(wandb_cleanup)
+
+        project_name = os.environ['WANDB_PROJECT'] if 'WANDB_PROJECT' in os.environ else 'wandb_prompts'
+        entity = os.environ['WANDB_ENTITY'] if 'WANDB_ENTITY' in os.environ else None
+        WandbTracer.init({"project": project_name, "entity": entity})
+
+    else:
+        print('Set WAND_API_KEY environment variable to enable W&B logging')
 
 init_wandb_tracer()
 
@@ -41,6 +61,7 @@ if "existing_df" not in st.session_state:
                                     'Retrieval score',
                                     'Answer score'])
     st.session_state.existing_df = summary
+
 else:
     summary = st.session_state.existing_df
 
