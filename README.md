@@ -51,3 +51,7 @@ https://blog.langchain.dev/auto-eval-of-question-answering-tasks/
 **Disclaimer**
 
 ```You will need an OpenAI API key with with access to `GPT-4` and an Anthropic API key to take advantage of all of the default dashboard model settings. However, additional models (e.g., from Hugging Face) can be easily added to the app.```
+
+**W&B Prompts Integration**
+
+If you set `WANDB_API_KEY` environment variable your evaluation results will get logged to [Weights & Biases Prompts](https://docs.wandb.ai/guides/prompts). Optionally, you can specify project name and entity by setting environment variables `WANDB_PROJECT` and `WANDB_ENTITY`. 
